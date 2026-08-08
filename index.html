@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarot Mỗi Ngày - Vũ Trụ Nhắn Gửi</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080810;color:#fff;font-family:'Be Vietnam Pro',sans-serif;min-height:100vh}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(at 50% 0%,#2a1a5e 0%,#080810 70%)}
+.wrap{max-width:420px;margin:auto;padding:20px}
+h1{font-family:Cinzel;text-align:center;font-size:30px;background:linear-gradient(90deg,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:30px}
+.sub{text-align:center;color:#a1a1aa;font-size:13px;margin-top:8px}
+.card{margin-top:16px;background:rgba(255,255,255,.06);border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:18px;display:flex;gap:16px;cursor:pointer}
+.card:hover{transform:translateY(-2px);background:rgba(168,85,247,.15)}
+.icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:grid;place-items:center;font-size:28px}
+.deck{display:none;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.b{aspect-ratio:2/3;background:linear-gradient(135deg,#1e1b4b,#4c1d95);border:1px solid #7c3aed;border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.b.sel{border-color:#f472b6;box-shadow:0 0 20px #ec4899;transform:translateY(-6px)}
+#res{display:none;margin-top:20px}
+.rc{background:rgba(255,255,255,.07);border:1px solid #7c3aed;border-radius:20px;padding:18px;margin-bottom:14px}
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-weight:700;margin-top:10px;background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+<h1>TAROT MỖI NGÀY</h1>
+<p class="sub">Vũ trụ muốn nhắn gửi điều gì đến bạn hôm nay?</p>
+
+<div id="home">
+<div class="card" onclick="play(1)"><div class="icon">🌙</div><div><b>Một Lá Bài</b><br><span style="font-size:12px;color:#a1a1aa">Thông điệp hôm nay</span></div></div>
+<div class="card" onclick="play(3)"><div class="icon">🔮</div><div><b>Ba Lá Bài</b><br><span style="font-size:12px;color:#a1a1aa">Quá khứ - Hiện tại - Tương lai</span></div></div>
+<div class="card" onclick="play(2)"><div class="icon">💜</div><div><b>Tình Yêu</b><br><span style="font-size:12px;color:#a1a1aa">Người ấy nghĩ gì về bạn?</span></div></div>
+</div>
+
+<div id="deckBox">
+<p id="need" style="text-align:center;margin:20px 0 10px;color:#c4b5fd"></p>
+<div class="deck" id="deck"></div>
+</div>
+
+<div id="res">
+<div id="list"></div>
+<button class="btn" onclick="location.reload()">🔁 Bói Lại</button>
+</div>
+</div>
+
+<script>
+const data=[
+{v:"Kẻ Khờ",e:"🃏",m:"Cứ liều đi! Vũ trụ đang đỡ lưng mày đó. Khởi đầu nào cũng ngáo ngơ hết.",a:"Bước đi dù không thấy hết đường."},
+{v:"Pháp Sư",e:"🧙",m:"Mày có đủ hết nguyên liệu rồi, chỉ thiếu hành động thôi. Làm đi!",a:"Dùng những gì mày đang có."},
+{v:"Nữ Tu",e:"🌙",m:"Đừng hỏi ai nữa, câu trả lời mày biết rồi. Tin vào trực giác đi.",a:"Im lặng 10p hôm nay nhé."},
+{v:"Nữ Hoàng",e:"👑",m:"Mày xứng đáng được yêu mà không cần phải gồng. Mềm lại với mình đi.",a:"Làm 1 điều dịu dàng cho bản thân."},
+{v:"Tình Nhân",e:"💞",m:"Chọn điều làm tim mày bình yên, không phải điều làm mày trông ổn.",a:"Trái tim mày biết đáp án."},
+{v:"Cỗ Xe",e:"🏇",m:"Sắp tới đích rồi, đừng bỏ ở km 99. Vũ trụ đang test độ lì của mày.",a:"Kéo dây cương và lao lên!"},
+{v:"Sức Mạnh",e:"🦁",m:"Mạnh mẽ là vẫn dịu dàng khi đời không dịu dàng với mày.",a:"Mày mạnh hơn mày nghĩ."},
+{v:"Ẩn Sĩ",e:"🕯️",m:"Rút khỏi ồn ào đi, có những câu trả lời chỉ tìm thấy khi ở một mình.",a:"Ở một mình là đang sạc pin."},
+{v:"Vòng Quay",e:"🎡",m:"Vòng quay đổi chiều rồi. Xấu sắp hết, tốt đang tới.",a:"Đừng cưỡng lại thay đổi."},
+{v:"Ngôi Sao",e:"⭐",m:"Hy vọng vẫn còn đó. Nguyện ước của mày đang được lắng nghe.",a:"Cứ tin đi, sao vẫn sáng."},
+{v:"Mặt Trăng",e:"🌕",m:"Mày overthinking quá rồi. 90% nỗi sợ không bao giờ xảy ra đâu.",a:"Đừng tin suy nghĩ lúc 2h sáng."},
+{v:"Mặt Trời",e:"☀️",m:"Nắng lên rồi cu ơi! Lá may mắn nhất đây. Cứ tỏa sáng đi!",a:"Cười nhiều vào, vận may đang tới."},
+];
+let need=1,chon=[];
+function play(n){need=n;document.getElementById('home').style.display='none';document.getElementById('deck').style.display='grid';document.getElementById('need').innerText=`Chọn ${n} lá bài - Tập trung nhé!`;let d=document.getElementById('deck');d.innerHTML='';[...data].sort(()=>0.5-Math.random()).slice(0,12).forEach(c=>{let b=document.createElement('div');b.className='b';b.innerHTML='✦';b.onclick=()=>{if(chon.length>=need)return;if(b.classList.contains('sel'))return;chon.push(c);b.classList.add('sel');if(chon.length==need)setTimeout(show,500)};d.appendChild(b)})}
+function show(){document.getElementById('deckBox').style.display='none';document.getElementById('res').style.display='block';let l=document.getElementById('list');l.innerHTML='';chon.forEach(c=>{l.innerHTML+=`<div class=rc><div style="display:flex;gap:12px;align-items:center"><div style="width:60px;height:80px;background:linear-gradient(135deg,#7c3aed,#ec4899);border-radius:10px;display:grid;place-items:center;font-size:30px">${c.e}</div><div><b>${c.v}</b><br><span style="font-size:11px;color:#c4b5fd">THÔNG ĐIỆP VŨ TRỤ</span></div></div><p style="margin-top:12px;font-size:14px;line-height:1.6">${c.m}</p><div style="margin-top:10px;background:rgba(168,85,247,.15);border-left:3px solid #a855f7;padding:8px 10px;border-radius:0 10px 10px 0;font-size:12px">💡 ${c.a}</div></div>`})}
+</script>
+</div>
+</body>
+</html>
